@@ -1,5 +1,7 @@
 using System;
 using Assets.src.g;
+using Library;
+using UnityEngine;
 
 public class Mob : IMapObject
 {
@@ -243,7 +245,11 @@ public class Mob : IMapObject
 
 	private bool isGetFr = true;
 
-	public Mob()
+    private static GUIStyle gUIStyleNormal = StringHandle.guiStyle(0, 7f, FontStyle.Bold, Color.green);
+
+    private static GUIStyle gUIStyleBorder = StringHandle.guiStyle(0, 7f, FontStyle.Bold, Color.black);
+
+    public Mob()
 	{
 	}
 
@@ -1430,7 +1436,9 @@ public class Mob : IMapObject
 		{
 			return;
 		}
-		if (isMafuba)
+        string text = string.Format("{0}. {1}", this.getTemplate().mobTemplateId, this.getTemplate().name);
+        StringHandle.drawStringBd(gUIStyleNormal, g, text, (float)(this.x - StringHandle.getWidth(gUIStyleNormal, text) / 2), (float)(this.y - this.h - 15), gUIStyleBorder);
+        if (isMafuba)
 		{
 			if (!changBody)
 			{

@@ -1,3 +1,5 @@
+using Library;
+
 public class ChatTextField : IActionListener
 {
 	private static ChatTextField instance;
@@ -158,7 +160,11 @@ public class ChatTextField : IActionListener
 
 	public void startChat(int firstCharacter, IChatable parentScreen, string to)
 	{
-		right.caption = mResources.CLOSE;
+        if (this == ChatTextField.gI())
+        {
+            HintCommand.gI.show();
+        }
+        right.caption = mResources.CLOSE;
 		this.to = to;
 		if (Main.isWindowsPhone)
 		{
@@ -295,7 +301,8 @@ public class ChatTextField : IActionListener
 				GameCanvas.paintz.paintCmdBar(g, left, center, right);
 			}
 			tfChat.paint(g);
-		}
+            HintCommand.gI.paint(g);
+        }
 	}
 
 	public void perform(int idAction, object p)

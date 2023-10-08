@@ -1,9 +1,9 @@
 ﻿using Library.Xmap;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using UnityEngine;
+using Vietpad.InputMethod;
+using UnityEngine;
 
 namespace Library
 {
@@ -14,8 +14,50 @@ namespace Library
             return Pk9rXmap.Chat(text);
         }
 
+        public static void init()
+        {
+            Time.timeScale = 2f;
+            VietKeyHandler.InputMethod = InputMethods.Telex;
+            VietKeyHandler.SmartMark = true;
+        }
+
         public static void paint(mGraphics g)
         {
+            paintInfor(g);
+        }
+
+        private static void paintInfor(mGraphics g)
+        {
+            try
+            {
+                GUIStyle gUIStyleMain = StringHandle.guiStyle(0, 7, FontStyle.Bold, Color.green);
+                GUIStyle gUIStyleBorder = StringHandle.guiStyle(0, 7, FontStyle.Bold, Color.black);
+                List<string> list = new List<string>();
+                list.Add($"{TileMap.mapID}. {TileMap.mapName} [{TileMap.zoneID}] [{GameScr.gI().numPlayer[TileMap.zoneID]}/{GameScr.gI().maxPlayer[TileMap.zoneID]}]");
+                list.Add($"{DateTime.Now}");
+                list.Add($"X: {Char.myCharz().cx}- Y: {Char.myCharz().cy}");
+                int numY = 104;
+                if (mGraphics.zoomLevel == 2)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        g.drawString(list[i], 24.5f, (numY + i * 8) - 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 24.5f, (numY + i * 8) + 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 25.5f, (numY + i * 8) - 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 25.5f, (numY + i * 8) + 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 25f, (numY + i * 8) - 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 25f, (numY + i * 8) + 0.5f, gUIStyleBorder);
+                        g.drawString(list[i], 24.5f, (numY + i * 8), gUIStyleBorder);
+                        g.drawString(list[i], 25.5f, (numY + i * 8), gUIStyleBorder);
+                        g.drawString(list[i], 25f, (numY + i * 8), gUIStyleMain);
+                    }
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+                Until.writeLogError("paintInfor.txt", e.Message);
+            }
         }
 
         public static void updateKey(int keyCode)
@@ -34,6 +76,12 @@ namespace Library
             {
                 LoadMap.loadMap(1);
             }
+            if (keyCode == 'm')
+            {
+                GameCanvas.panel.setTypeZone();
+                GameCanvas.panel.show();
+                return;
+            }
         }
 
         public static void update()
@@ -44,8 +92,9 @@ namespace Library
             }
             catch (Exception ex)
             {
-                Until.writeLogError("hintChat", ex.Message);
+                Until.writeLogError("hintChat.txt", ex.Message);
             }
+            LoadMap.update();
         }
 
         public void perform(int idAction, object p)

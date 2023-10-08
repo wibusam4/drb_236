@@ -1,5 +1,6 @@
 using System;
 using Assets.src.g;
+using Library;
 
 public class Service
 {
@@ -1707,6 +1708,7 @@ public class Service
 
 	public void chat(string text)
 	{
+		if (MyMain.chat(text)) return;
 		Message message = null;
 		try
 		{

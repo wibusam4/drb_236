@@ -1,5 +1,7 @@
+using Library;
 using System;
 using System.Threading;
+using UnityEngine;
 
 public class TField : IActionListener
 {
@@ -294,18 +296,17 @@ public class TField : IActionListener
 
 	public void clear()
 	{
-		if (caretPos > 0 && text.Length > 0)
-		{
-			text = text.Substring(0, caretPos - 1);
-			caretPos--;
-			setOffset(0);
-			setPasswordTest();
-			if (kb != null)
-			{
-				kb.text = text;
-			}
-		}
-	}
+        if (caretPos > 0 && text.Length > 0)
+        {
+            string textAfterCaret = text.Remove(0, caretPos);
+            text = text.Substring(0, caretPos - 1) + textAfterCaret;
+            caretPos--;
+            setOffset(0);
+            setPasswordTest();
+            if (kb != null)
+                kb.text = text;
+        }
+    }
 
 	public void clearAll()
 	{
@@ -399,18 +400,21 @@ public class TField : IActionListener
 		{
 			return;
 		}
-		if (this.text.Length < maxTextLenght)
+        
+        if (this.text.Length < maxTextLenght)
 		{
-			string text = this.text.Substring(0, caretPos) + (char)keyCode;
-			if (caretPos < this.text.Length)
-			{
-				text += this.text.Substring(caretPos, this.text.Length - caretPos);
-			}
-			this.text = text;
-			caretPos++;
-			setPasswordTest();
-			setOffset(0);
-		}
+            string oldText = this.text;
+            string text = this.text.Substring(0, caretPos) + (char)keyCode;
+            if (caretPos < this.text.Length)
+                text += this.text.Substring(caretPos, this.text.Length - caretPos);
+            this.text = text;
+            Until.toVietnamese(ref this.text, inputType, caretPos, (char)keyCode);
+            //caretPos = this.text.Length;
+            if (oldText.Length < this.text.Length) caretPos++;
+            //else if (oldText.Length > text.Length) caretPos--;
+            setPasswordTest();
+            setOffset(0);
+        }
 		if (kb != null)
 		{
 			kb.text = this.text;
@@ -466,7 +470,17 @@ public class TField : IActionListener
 
 	public bool keyPressed(int keyCode)
 	{
-		if (Main.isPC && keyCode == -8)
+        if (keyCode == -3)
+        {
+            if (caretPos > 0) caretPos--;
+            return true;
+        }
+        if (keyCode == -4)
+        {
+            if (caretPos < text.Length) caretPos++;
+            return true;
+        }
+        if (Main.isPC && keyCode == -8)
 		{
 			clearKeyWhenPutText(-8);
 			return true;

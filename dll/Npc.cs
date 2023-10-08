@@ -1,3 +1,5 @@
+using Library;
+
 public class Npc : Char
 {
 	public const sbyte BINH_KHI = 0;
@@ -361,12 +363,13 @@ public class Npc : Char
 		{
 			if (Char.myCharz().npcFocus != null && Char.myCharz().npcFocus.Equals(this))
 			{
-				mFont.tahoma_7_yellow.drawString(g, template.name, cx, cy - ch - mFont.tahoma_7.getHeight() - 5, mFont.CENTER, mFont.tahoma_7_grey);
+                StringHandle.drawStringBd(mFont.tahoma_7_yellow, g, $"[{template.npcTemplateId}] {template.name}", cx, cy - ch - mFont.tahoma_7.getHeight() -5, mFont.CENTER, mFont.tahoma_7);
+                
 			}
 			else
 			{
-				mFont.tahoma_7_yellow.drawString(g, template.name, cx, cy - ch - 3 - mFont.tahoma_7.getHeight(), mFont.CENTER, mFont.tahoma_7_grey);
-			}
+                StringHandle.drawStringBd(mFont.tahoma_7_yellow, g, $"[{template.npcTemplateId}] {template.name}", cx, cy - ch -3 - mFont.tahoma_7.getHeight(), mFont.CENTER, mFont.tahoma_7);
+            }
 			dyEff = 60;
 		}
 		else
@@ -425,7 +428,8 @@ public class Npc : Char
 							num3 = 3;
 							num4 = -12;
 						}
-						mFont.tahoma_7_yellow.drawString(g, template.name, cx + num3, cy - ch - mFont.tahoma_7.getHeight() - num2 + num4, mFont.CENTER, mFont.tahoma_7_grey);
+                        StringHandle.drawStringBd(mFont.tahoma_7_yellow, g, $"[{template.npcTemplateId}] {template.name}", cx, cy - ch - mFont.tahoma_7.getHeight() -num2, mFont.CENTER, mFont.tahoma_7);
+                        
 					}
 				}
 				else
@@ -444,7 +448,8 @@ public class Npc : Char
 							num5 = 3;
 							num6 = -12;
 						}
-						mFont.tahoma_7_yellow.drawString(g, template.name, cx + num5, cy - ch - num2 - mFont.tahoma_7.getHeight() + num6, mFont.CENTER, mFont.tahoma_7_grey);
+                        StringHandle.drawStringBd(mFont.tahoma_7_yellow, g, $"[{template.npcTemplateId}] {template.name}", cx, cy - ch -num2 - mFont.tahoma_7.getHeight(), mFont.CENTER, mFont.tahoma_7);
+                        
 					}
 				}
 			}

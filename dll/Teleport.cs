@@ -1,3 +1,5 @@
+using Library.Xmap;
+
 public class Teleport
 {
 	public static MyVector vTeleport = new MyVector();
@@ -172,6 +174,7 @@ public class Teleport
 
 	public void update()
 	{
+		if (Pk9rXmap.XoaTauBay(this)) return;
 		if (planet > 2 && paintFire && y != -80)
 		{
 			if (isDown && tPrepare == 0)

@@ -5147,7 +5147,7 @@ public class GameScr : mScreen, IChatable
                 }
             }
         }
-        BackgroudEffect.paintFog(g);
+        //BackgroudEffect.paintFog(g);
         bool flag = true;
         for (int i = 0; i < BackgroudEffect.vBgEffect.size(); i++)
         {
@@ -5197,22 +5197,7 @@ public class GameScr : mScreen, IChatable
         paint_xp_bar(g);
         if (!isPaintOther)
         {
-            if (GameCanvas.open3Hour)
-            {
-                if (GameCanvas.w > 250)
-                {
-                    g.drawImage(GameCanvas.img12, 160, 6, 0);
-                    mFont.tahoma_7_white.drawString(g, "Dành cho người chơi trên 12 tuổi.", 180, 2, 0);
-                    mFont.tahoma_7_white.drawString(g, "Chơi quá 180 phút mỗi ngày ", 180, 12, 0);
-                    mFont.tahoma_7_white.drawString(g, "sẽ hại sức khỏe.", 180, 22, 0);
-                }
-                else
-                {
-                    g.drawImage(GameCanvas.img12, 5, GameCanvas.h - 67, 0);
-                    mFont.tahoma_7_white.drawString(g, "Dành cho người chơi trên 12 tuổi.", 25, GameCanvas.h - 70, 0);
-                    mFont.tahoma_7_white.drawString(g, "Chơi quá 180 phút mỗi ngày sẽ hại sức khỏe.", 25, GameCanvas.h - 60, 0);
-                }
-            }
+            
             GameCanvas.debug("PA21", 1);
             GameCanvas.debug("PA18", 1);
             g.translate(-g.getTranslateX(), -g.getTranslateY());
@@ -5383,6 +5368,7 @@ public class GameScr : mScreen, IChatable
                     mFont.tahoma_7b_white.drawString(g, strPaint[i], 5, 85 + i * 18, 0, mFont.tahoma_7b_dark);
                 }
             }
+            MyMain.paint(g);
         }
         int num12 = 0;
         int num13 = GameCanvas.hw;
@@ -6630,8 +6616,6 @@ public class GameScr : mScreen, IChatable
         {
             Cout.LogError("Loi ham OPEN UIZONE " + ex.ToString());
         }
-        GameCanvas.panel.setTypeZone();
-        GameCanvas.panel.show();
     }
 
     public void showViewInfo()

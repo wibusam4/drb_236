@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using Assets.src.g;
+using Library;
 using UnityEngine;
 
 public class GameCanvas : IActionListener
@@ -1942,11 +1943,11 @@ public class GameCanvas : IActionListener
 	public void keyPressedz(int keyCode)
 	{
 		lastTimePress = mSystem.currentTimeMillis();
-		if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 122) || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 32 || keyCode == 31)
-		{
-			keyAsciiPress = keyCode;
-		}
-		mapKeyPress(keyCode);
+        if ((keyCode >= 31 && keyCode <= 126) || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 31)
+        {
+            keyAsciiPress = keyCode;
+        }
+        mapKeyPress(keyCode);
 	}
 
 	public void mapKeyPress(int keyCode)
@@ -2504,9 +2505,24 @@ public class GameCanvas : IActionListener
 
 	public static void startOKDlg(string info)
 	{
-		closeKeyBoard();
-		msgdlg.setInfo(info, null, new Command(mResources.OK, instance, 8882, null), null);
-		currentDialog = msgdlg;
+        if (!info.ToLower().StartsWith("không thể đặt") && !info.ToLower().Contains("không thể đổi khu vực trong map này") && !info.ToLower().Contains("can not change zone in this map"))
+		{
+            if (info.StartsWith("Mỗi map chỉ đặt được 3 Vệ Tinh"))
+            {
+                endDlg();
+                GameScr.info1.addInfo("Trong map đã có đủ vệ tinh", 0);
+                return;
+            }
+            if (info.ToLower().StartsWith("vui lòng đợi"))
+            {
+                GameScr.info1.addInfo(info, 0);
+                return;
+            }
+            closeKeyBoard();
+            msgdlg.setInfo(info, null, new Command(mResources.OK, instance, 8882, null), null);
+            currentDialog = msgdlg;
+        }
+            
 	}
 
 	public static void startWaitDlg(string info)

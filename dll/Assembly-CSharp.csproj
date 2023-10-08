@@ -19,6 +19,9 @@
     <Reference Include="UnityEngine">
       <HintPath>..\Dragon_ball_236_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="VietKey.NET">
+      <HintPath>..\Dragon_ball_236_Data\Managed\VietKey.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="copy $(TargetPath) $(SolutionDir)Dragon_ball_236_Data\Managed" />

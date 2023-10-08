@@ -4,11 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Vietpad.InputMethod;
 
 namespace Library
 {
     public class Until
     {
+        public static VietKeyHandler vietKeyHandler = new VietKeyHandler();
+
+        public static void toVietnamese(ref string str, int inputType, int caresPos, char keyChar)
+        {
+            if (inputType == TField.INPUT_TYPE_ANY && !str.StartsWith("/")) str = vietKeyHandler.toVietnamese(str, caresPos);
+        }
+
         public static void writeLogError(string path, string message)
         {
             StreamWriter streamWriter = new StreamWriter("/Data/Errors/" + path);
@@ -105,18 +113,18 @@ namespace Library
         {
             public void wait(int time)
             {
-                this.isWait = true;
-                this.timeStartWait = mSystem.currentTimeMillis();
-                this.timeWait = (long)time;
+                isWait = true;
+                timeStartWait = mSystem.currentTimeMillis();
+                timeWait = time;
             }
 
             public bool isWaiting()
             {
-                if (this.isWait && mSystem.currentTimeMillis() - this.timeStartWait >= this.timeWait)
+                if (isWait && mSystem.currentTimeMillis() - timeStartWait >= timeWait)
                 {
-                    this.isWait = false;
+                    isWait = false;
                 }
-                return this.isWait;
+                return isWait;
             }
 
             private bool isWait;

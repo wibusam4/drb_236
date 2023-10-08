@@ -5,3 +5,4 @@ C:\Users\Admin\OneDrive\Desktop\Drb\Dragon_ball_236\dll\obj\Debug\net35\Assembly
 C:\Users\Admin\OneDrive\Desktop\Drb\Dragon_ball_236\dll\obj\Debug\net35\Assembly-CSharp.csproj.CoreCompileInputs.cache
 C:\Users\Admin\OneDrive\Desktop\Drb\Dragon_ball_236\dll\obj\Debug\net35\Assembly-CSharp.csproj.CopyComplete
 C:\Users\Admin\OneDrive\Desktop\Drb\Dragon_ball_236\dll\obj\Debug\net35\Assembly-CSharp.dll
+C:\Users\Admin\OneDrive\Desktop\Drb\Dragon_ball_236\dll\bin\Debug\net35\VietKey.NET.dll

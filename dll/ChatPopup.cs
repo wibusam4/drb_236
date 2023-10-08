@@ -1,3 +1,4 @@
+﻿using Library;
 using System;
 
 public class ChatPopup : Effect2, IActionListener
@@ -104,7 +105,13 @@ public class ChatPopup : Effect2, IActionListener
 
 	public static void addBigMessage(string chat, int howLong, Npc c)
 	{
-		string[] array = new string[1] { chat };
+        string lowerChat = chat.ToLower();
+        if (lowerChat.Contains("báo") || lowerChat.Contains("kiện"))
+        {
+            GameScr.info1.addInfo(chat, 0);
+            return;
+        }
+        string[] array = new string[1] { chat };
 		if (c.charID != 5 && GameScr.info1.isDone)
 		{
 			GameScr.info1.isUpdate = false;
@@ -124,7 +131,14 @@ public class ChatPopup : Effect2, IActionListener
 
 	public static void addChatPopupMultiLine(string chat, int howLong, Npc c)
 	{
-		string[] array = Res.split(chat, "\n", 0);
+		string lowerChat = chat.ToLower();
+        if ((lowerChat.Contains("giây") || lowerChat.Contains("đủ") || lowerChat.Contains("không") || lowerChat.Contains("không thể đến") || lowerChat.Contains("cần")) && GameCanvas.currentScreen == GameScr.instance)
+        {
+            GameScr.info1.addInfo(chat, 0);
+            LoadMap.isAutoJoinZone = false;
+            return;
+        }
+        string[] array = Res.split(chat, "\n", 0);
 		Char.isLockKey = true;
 		currChatPopup = addChatPopup(array[0], howLong, c);
 		currChatPopup.currentLine = 0;

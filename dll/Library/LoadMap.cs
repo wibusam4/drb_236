@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using UnityEngine;
 
 namespace Library
 {
@@ -115,10 +117,74 @@ namespace Library
             wayPointMapRight = new int[2];
         }
 
+        public static void updateZone()
+        {
+            if (mSystem.currentTimeMillis() - TIME_DELAY_OPEN_ZONEUI > 501)
+            {
+                Service.gI().openUIZone();
+                TIME_DELAY_OPEN_ZONEUI = mSystem.currentTimeMillis();
+            }
+        }
+
+        public static void update()
+        {
+            try
+            {
+                updateZone();
+            }
+            catch (Exception ex2)
+            {
+                Until.writeLogError("updateZone.txt", ex2.Message);
+            }
+        }
+
+        public static void autoJoinZone(object zoneJoin)
+        {
+            try
+            {
+                isAutoJoinZone = true;
+                int zoneID = TileMap.zoneID;
+                int mapID = TileMap.mapID;
+                int zone = (int)zoneJoin;
+                if (isAutoJoinZone)
+                {
+                    GameScr.info1.addInfo("Auto vào Khu: " + zone, 0);
+                }
+                while (TileMap.zoneID == zoneID && TileMap.mapID == mapID && TileMap.zoneID != zone)
+                {
+                    if (Input.GetKey("e"))
+                    {
+                        GameScr.info1.addInfo("Đã dừng auto vào khu", 0);
+                        isAutoJoinZone = false;
+                        return;
+                    }
+                    if (!isAutoJoinZone)
+                    {
+                        return;
+                    }
+                    if (GameScr.gI().numPlayer[zone] < GameScr.gI().maxPlayer[zone])
+                    {
+                        Service.gI().requestChangeZone(zone, -1);
+                    }
+                    Thread.Sleep(1);
+                }
+                isAutoJoinZone = false;
+            }
+            catch (Exception e)
+            {
+                GameScr.info1.addInfo("Lỗi vào khu: " + e.Message, 0);
+                isAutoJoinZone = false;
+            }
+        }
+
         private static int[] wayPointMapLeft;
 
         private static int[] wayPointMapCenter;
 
         private static int[] wayPointMapRight;
+
+        public static long TIME_DELAY_OPEN_ZONEUI;
+
+        public static bool isAutoJoinZone;
     }
 }

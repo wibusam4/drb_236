@@ -10,7 +10,7 @@ namespace Library.Xmap
 		{
 			if (text == "/xmp")
 			{
-				if (Pk9rXmap.IsXmapRunning)
+				if (IsXmapRunning)
 				{
 					XmapController.FinishXmap();
 					GameScr.info1.addInfo("Đã huỷ Xmap", 0);
@@ -20,22 +20,22 @@ namespace Library.Xmap
 					XmapController.ShowXmapMenu();
 				}
 			}
-			else if (Pk9rXmap.IsGetInfoChat<int>(text, "/xmp"))
+			else if (IsGetInfoChat<int>(text, "/xmp"))
 			{
-				if (Pk9rXmap.IsXmapRunning)
+				if (IsXmapRunning)
 				{
 					XmapController.FinishXmap();
 					GameScr.info1.addInfo("Đã huỷ Xmap", 0);
 				}
 				else
 				{
-					XmapController.StartRunToMapId(Pk9rXmap.GetInfoChat<int>(text, "/xmp"));
+					XmapController.StartRunToMapId(GetInfoChat<int>(text, "/xmp"));
 				}
 			}
 			else if (text == "/csb")
 			{
-				Pk9rXmap.IsUseCapsuleNormal = !Pk9rXmap.IsUseCapsuleNormal;
-				GameScr.info1.addInfo("Sử dụng capsule thường Xmap: " + (Pk9rXmap.IsUseCapsuleNormal ? "Bật" : "Tắt"), 0);
+				IsUseCapsuleNormal = !IsUseCapsuleNormal;
+				GameScr.info1.addInfo("Sử dụng capsule thường Xmap: " + (IsUseCapsuleNormal ? "Bật" : "Tắt"), 0);
 			}
 			else
 			{
@@ -43,8 +43,8 @@ namespace Library.Xmap
 				{
 					return false;
 				}
-				Pk9rXmap.IsUseCapsuleVip = !Pk9rXmap.IsUseCapsuleVip;
-				GameScr.info1.addInfo("Sử dụng capsule đặc biệt Xmap: " + (Pk9rXmap.IsUseCapsuleVip ? "Bật" : "Tắt"), 0);
+				IsUseCapsuleVip = !IsUseCapsuleVip;
+				GameScr.info1.addInfo("Sử dụng capsule đặc biệt Xmap: " + (IsUseCapsuleVip ? "Bật" : "Tắt"), 0);
 			}
 			return true;
 		}
@@ -58,11 +58,11 @@ namespace Library.Xmap
 				{
 					return false;
 				}
-				Pk9rXmap.Chat("xmp");
+				Chat("xmp");
 			}
 			else
 			{
-				Pk9rXmap.Chat("csb");
+				Chat("csb");
 			}
 			return true;
 		}
@@ -73,7 +73,7 @@ namespace Library.Xmap
 			{
 				XmapData.Instance().Update();
 			}
-			if (Pk9rXmap.IsXmapRunning)
+			if (IsXmapRunning)
 			{
 				XmapController.Update();
 			}
@@ -92,11 +92,11 @@ namespace Library.Xmap
 			Teleport teleport = (Teleport)obj;
 			if (teleport.isMe)
 			{
-				global::Char.myCharz().isTeleport = false;
+				Char.myCharz().isTeleport = false;
 				if (teleport.type == 0)
 				{
 					Controller.isStopReadMessage = false;
-					global::Char.ischangingMap = true;
+					Char.ischangingMap = true;
 				}
 				Teleport.vTeleport.removeElement(teleport);
 				return true;
@@ -106,7 +106,7 @@ namespace Library.Xmap
 
 		public static void SelectMapTrans(int selected)
 		{
-			if (Pk9rXmap.IsMapTransAsXmap)
+			if (IsMapTransAsXmap)
 			{
 				XmapController.HideInfoDlg();
 				XmapController.StartRunToMapId(XmapData.GetIdMapFromPanelXmap(GameCanvas.panel.mapNames[selected]));
@@ -118,21 +118,21 @@ namespace Library.Xmap
 
 		public static void ShowPanelMapTrans()
 		{
-			Pk9rXmap.IsMapTransAsXmap = false;
-			if (Pk9rXmap.IsShowPanelMapTrans)
+			IsMapTransAsXmap = false;
+			if (IsShowPanelMapTrans)
 			{
 				GameCanvas.panel.setTypeMapTrans();
 				GameCanvas.panel.show();
 				return;
 			}
-			Pk9rXmap.IsShowPanelMapTrans = true;
+			IsShowPanelMapTrans = true;
 		}
 
 		public static void FixBlackScreen()
 		{
 			Controller.gI().loadCurrMap(0);
 			Service.gI().finishLoadMap();
-			global::Char.isLoadingMap = false;
+			Char.isLoadingMap = false;
 		}
 
 		private static bool IsGetInfoChat<T>(string text, string s)
