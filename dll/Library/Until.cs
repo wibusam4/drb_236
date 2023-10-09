@@ -12,6 +12,11 @@ namespace Library
     {
         public static VietKeyHandler vietKeyHandler = new VietKeyHandler();
 
+        public static void teleportMyChar(IMapObject obj)
+        {
+            teleportTo(obj.getX(), obj.getY());
+        }
+
         public static void toVietnamese(ref string str, int inputType, int caresPos, char keyChar)
         {
             if (inputType == TField.INPUT_TYPE_ANY && !str.StartsWith("/")) str = vietKeyHandler.toVietnamese(str, caresPos);
@@ -107,6 +112,65 @@ namespace Library
         public static void showCat(string text)
         {
             GameScr.info1.addInfo(text, 0);
+        }
+
+        public static bool isMeWearingActivationSet(int idSet)
+        {
+            int num = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                Item item = Char.myCharz().arrItemBody[i];
+                if (item == null)
+                {
+                    return false;
+                }
+                if (item.itemOption == null)
+                {
+                    return false;
+                }
+                for (int j = 0; j < item.itemOption.Length; j++)
+                {
+                    if (item.itemOption[j].optionTemplate.id == idSet)
+                    {
+                        num++;
+                        break;
+                    }
+                }
+            }
+            return num == 5;
+        }
+
+        public static bool isMeWearingTXHSet()
+        {
+            return Char.myCharz().cgender == 0 && isMeWearingActivationSet(127);
+        }
+
+        public static bool isMeWearingPikkoroDaimaoSet()
+        {
+            return Char.myCharz().cgender == 1 && isMeWearingActivationSet(132);
+        }
+
+        public static bool isMeWearingCadicSet()
+        {
+            return Char.myCharz().cgender == 2 && isMeWearingActivationSet(134);
+        }
+
+        public static short getNRSDId()
+        {
+            if (isMeInNRDMap())
+            {
+                return (short)(2400 - TileMap.mapID);
+            }
+            return 0;
+        }
+
+        public static string statusMenu(bool Bool)
+        {
+            if (!Bool)
+            {
+                return "Đang Tắt";
+            }
+            return "Đang Bật";
         }
 
         public class Threading

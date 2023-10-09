@@ -1,6 +1,8 @@
 using System;
 using Assets.src.e;
 using Assets.src.g;
+using Library;
+using Library;
 
 public class Char : IMapObject
 {
@@ -993,7 +995,7 @@ public class Char : IMapObject
 
 	public static bool isManualFocus = false;
 
-	private Char charHold;
+    public Char charHold;
 
 	private Mob mobHold;
 
@@ -1247,7 +1249,9 @@ public class Char : IMapObject
 
 	private MainImage mainImg;
 
-	public Char()
+    public CharEffectTime charEffectTime = new CharEffectTime();
+
+    public Char()
 	{
 		statusMe = 6;
 	}
@@ -1770,7 +1774,58 @@ public class Char : IMapObject
 
 	public virtual void update()
 	{
-		if (isMafuba)
+        if (charEffectTime.HasAnyEffect() && !CharEffect.isContains(charID))
+        {
+            CharEffect.storedChars.Add(this);
+        }
+        charEffectTime.update();
+        if (head == 412 && body == 413 && leg == 414)
+        {
+            if (!charEffectTime.isChocolate)
+            {
+                charEffectTime.isChocolate = true;
+                charEffectTime.lastTimeChocolated = mSystem.currentTimeMillis();
+                charEffectTime.timeChocolate = this.getTimeChocolate() + 1;
+            }
+        }
+        else
+        {
+            charEffectTime.isChocolate = false;
+            charEffectTime.timeChocolate = 0;
+        }
+        if (Until.isMeInNRDMap() && bag >= 0 && ClanImage.idImages.containsKey(bag.ToString() + string.Empty))
+        {
+            ClanImage clanImage = (ClanImage)ClanImage.idImages.get(bag.ToString() + string.Empty);
+            bool flag = true;
+            if (clanImage.idImage != null)
+            {
+                int i = 0;
+                while (i < clanImage.idImage.Length)
+                {
+                    if (clanImage.idImage[i] == 2322)
+                    {
+                        charEffectTime.hasNRD = true;
+                        flag = false;
+                        if (charEffectTime.timeHoldingNRD == 0)
+                        {
+                            charEffectTime.timeHoldingNRD = 302;
+                            break;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+            if (flag)
+            {
+                charEffectTime.hasNRD = false;
+                charEffectTime.timeHoldingNRD = 0;
+            }
+        }
+        if (isMafuba)
 		{
 			cf = 23;
 			countMafuba++;
@@ -1874,34 +1929,107 @@ public class Char : IMapObject
 			{
 				return;
 			}
-			if (sleepEff && GameCanvas.gameTick % 10 == 0)
-			{
-				EffecMn.addEff(new Effect(41, cx, cy, 3, 1, 1));
-			}
-			if (huytSao)
-			{
-				huytSao = false;
-				EffecMn.addEff(new Effect(39, cx, cy, 3, 3, 1));
-			}
-			if (blindEff && GameCanvas.gameTick % 5 == 0)
-			{
-				ServerEffect.addServerEffect(113, this, 1);
-			}
-			if (protectEff)
-			{
-				int y = cH_new + 73;
-				if (GameCanvas.gameTick % 5 == 0)
-				{
-					eProtect = new Effect(33, cx, y, 3, 3, 1);
-				}
-				if (eProtect != null)
-				{
-					eProtect.update();
-					eProtect.x = cx;
-					eProtect.y = y;
-				}
-			}
-			if (danhHieuEff)
+            if (sleepEff)
+            {
+                if (!charEffectTime.isHypnotized)
+                {
+                    charEffectTime.isHypnotized = true;
+                    charEffectTime.lastTimeHypnotized = mSystem.currentTimeMillis();
+                    if (charEffectTime.timeHypnotized <= 0)
+                    {
+                        charEffectTime.timeHypnotized = this.getTimeHypnotize() + 1;
+                    }
+                }
+                if (GameCanvas.gameTick % 10 == 0)
+                {
+                    EffecMn.addEff(new Effect(41, cx, cy, 3, 1, 1));
+                }
+            }
+            else
+            {
+                charEffectTime.isHypnotized = false;
+                charEffectTime.timeHypnotized = 0;
+            }
+            if (isMonkey == 1)
+            {
+                if (!charEffectTime.hasMonkey)
+                {
+                    charEffectTime.hasMonkey = true;
+                    charEffectTime.lastTimeMonkey = mSystem.currentTimeMillis();
+                    if (charEffectTime.timeMonkey <= 0)
+                    {
+                        charEffectTime.timeMonkey = this.getTimeMonkey();
+                    }
+                }
+            }
+            else
+            {
+                charEffectTime.hasMonkey = false;
+                charEffectTime.timeMonkey = 0;
+            }
+            if (huytSao)
+            {
+                huytSao = false;
+                if (!charEffectTime.hasHuytSao)
+                {
+                    charEffectTime.hasHuytSao = true;
+                    charEffectTime.lastTimeHuytSao = mSystem.currentTimeMillis();
+                    if (charEffectTime.timeHuytSao <= 0)
+                    {
+                        charEffectTime.timeHuytSao = this.getTimeHuytSao() + 1;
+                    }
+                }
+                EffecMn.addEff(new Effect(39, cx, cy, 3, 3, 1));
+            }
+            if (this.blindEff)
+            {
+                if (!this.charEffectTime.isTeleported)
+                {
+                    this.charEffectTime.isTeleported = true;
+                    this.charEffectTime.lastTimeTeleported = mSystem.currentTimeMillis();
+                    if (this.charEffectTime.timeTeleported <= 0)
+                    {
+                        this.charEffectTime.timeTeleported = 7;
+                    }
+                }
+                if (GameCanvas.gameTick % 5 == 0)
+                {
+                    ServerEffect.addServerEffect(113, this, 1);
+                }
+            }
+            else
+            {
+                this.charEffectTime.isTeleported = false;
+                this.charEffectTime.timeTeleported = 0;
+            }
+            if (this.protectEff)
+            {
+                if (!this.charEffectTime.hasShield)
+                {
+                    this.charEffectTime.hasShield = true;
+                    this.charEffectTime.lastTimeShield = mSystem.currentTimeMillis();
+                    if (this.charEffectTime.timeShield <= 0)
+                    {
+                        this.charEffectTime.timeShield = this.getTimeShield() + 1;
+                    }
+                }
+                if (GameCanvas.gameTick % 5 == 0)
+                {
+                    this.eProtect = new Effect(33, this.cx, this.cy + 37, 3, 3, 1);
+                }
+                if (this.eProtect != null)
+                {
+                    this.eProtect.update();
+                    this.eProtect.x = this.cx;
+                    this.eProtect.y = cH_new + 73;
+                }
+            }
+            else
+            {
+                this.charEffectTime.hasShield = false;
+                this.charEffectTime.timeShield = 0;
+            }
+            if (danhHieuEff)
 			{
 				if (eDanhHieu == null)
 				{
@@ -1984,11 +2112,34 @@ public class Char : IMapObject
 			soundUpdate();
 			if (stone)
 			{
-				return;
+                if (!this.charEffectTime.isStone)
+                {
+                    this.charEffectTime.isStone = true;
+                    this.charEffectTime.lastTimeStoned = mSystem.currentTimeMillis();
+                    if (this.charEffectTime.timeStone <= 0)
+                    {
+                        this.charEffectTime.timeStone = this.getTimeStone() + 1;
+                    }
+                }
+                return;
 			}
-			if (isFreez)
+            this.charEffectTime.isStone = false;
+            this.charEffectTime.timeStone = 0;
+            if (isFreez)
 			{
-				if (GameCanvas.gameTick % 5 == 0)
+                this.charEffectTime.isTDHS = true;
+                if (this.me && this.meDead)
+                {
+                    this.freezSeconds = 0;
+                    this.charEffectTime.isTDHS = false;
+                    this.charEffectTime.timeTDHS = 0;
+                }
+                else
+                {
+                    this.charEffectTime.lastTimeTDHS = mSystem.currentTimeMillis();
+                    this.charEffectTime.timeTDHS = this.freezSeconds + 1;
+                }
+                if (GameCanvas.gameTick % 5 == 0)
 				{
 					ServerEffect.addServerEffect(113, cx, cy, 1);
 				}
@@ -2023,7 +2174,9 @@ public class Char : IMapObject
 				}
 				return;
 			}
-			if (isWaitMonkey)
+            this.charEffectTime.isTDHS = false;
+            this.charEffectTime.timeTDHS = 0;
+            if (isWaitMonkey)
 			{
 				isLockMove = true;
 				cf = 17;
@@ -2229,8 +2382,26 @@ public class Char : IMapObject
 			if (mobMe != null)
 			{
 				updateMobMe();
-			}
-			if (arr != null)
+                if (this.mobMe.isDie || this.mobMe.hp <= 0)
+                {
+                    this.charEffectTime.hasMobMe = false;
+                    this.mobMe = null;
+                }
+                else if (!this.charEffectTime.hasMobMe)
+                {
+                    this.charEffectTime.hasMobMe = true;
+                    this.charEffectTime.lastTimeMobMe = mSystem.currentTimeMillis();
+                    if (this.charEffectTime.timeMobMe <= 0)
+                    {
+                        this.charEffectTime.timeMobMe = this.getTimeMobMe() + 1;
+                    }
+                }
+            }
+            else
+            {
+                this.charEffectTime.hasMobMe = false;
+            }
+            if (arr != null)
 			{
 				arr.update();
 			}
@@ -2267,7 +2438,9 @@ public class Char : IMapObject
 						holder = false;
 						charHold = null;
 						mobHold = null;
-					}
+                        this.charEffectTime.isTied = false;
+                        this.charEffectTime.isTiedByMe = false;
+                    }
 					if (TileMap.tileTypeAt(cx, cy, 2))
 					{
 						cf = 16;
@@ -4916,8 +5089,15 @@ public class Char : IMapObject
 		return !isUseSkillAfterCharge && myskill != null && (myskill.template.id == 10 || myskill.template.id == 11);
 	}
 
-	public void setSkillPaint(SkillPaint skillPaint, int sType)
+    public static bool onUseSkill(Skill skill)
+    {
+        CharEffect.addEffectCreatedByMe(skill);
+        return false;
+    }
+
+    public void setSkillPaint(SkillPaint skillPaint, int sType)
 	{
+		if (me && onUseSkill(myskill)) return;
 		hasSendAttack = false;
 		if (stone || (me && myskill.template.id == 9 && cHP <= cHPFull / 10))
 		{
@@ -6921,7 +7101,13 @@ public class Char : IMapObject
 		}
 		charHold = r;
 		holder = true;
-	}
+        r.charEffectTime.isTied = true;
+        r.charEffectTime.timeTied = r.getTimeHold() + 1;
+        if (me)
+        {
+            vItemTime.addElement(new ItemTime(3779, this.getTimeHold()));
+        }
+    }
 
 	public void setHoldMob(Mob r)
 	{
@@ -6935,7 +7121,13 @@ public class Char : IMapObject
 		}
 		mobHold = r;
 		holder = true;
-	}
+        r.mobEffectTime.isTied = true;
+        r.mobEffectTime.timeTied = this.getTimeHold() + 1;
+        if (me)
+        {
+           Char.vItemTime.addElement(new ItemTime(3779, this.getTimeHold()));
+        }
+    }
 
 	public void findNextFocusByKey()
 	{
@@ -7474,7 +7666,13 @@ public class Char : IMapObject
 			charHold = null;
 			mobHold = null;
 		}
-	}
+        this.charEffectTime.isTied = false;
+        this.charEffectTime.isTiedByMe = false;
+        if (this.me)
+        {
+            CharEffect.removeElement(new ItemTime(3779, 0));
+        }
+    }
 
 	public void removeProtectEff()
 	{
@@ -7496,11 +7694,14 @@ public class Char : IMapObject
 		if (holder)
 		{
 			holder = false;
-		}
+            this.charEffectTime.isTied = false;
+            this.charEffectTime.isTiedByMe = false;
+        }
 		if (protectEff)
 		{
 			protectEff = false;
-		}
+            this.charEffectTime.hasShield = false;
+        }
 		eProtect = null;
 		charHold = null;
 		mobHold = null;
@@ -8297,4 +8498,14 @@ public class Char : IMapObject
 		}
 		Res.err("===== tim thay DanhHieu ve danh hieu ra");
 	}
+
+    public bool IsPet()
+    {
+        return this.isPet;
+    }
+
+    public bool IsMiniPet()
+    {
+        return this.isMiniPet;
+    }
 }

@@ -24,11 +24,26 @@ public class ItemTime
 
 	private int per = 100;
 
-	public ItemTime()
+    public bool isInfinity;
+
+    public bool isEquivalence;
+
+    public ItemTime()
 	{
 	}
 
-	public ItemTime(short idIcon, int s)
+    public ItemTime(short idIcon, int time, bool isEquivalence) : this(idIcon, time)
+    {
+        this.isEquivalence = isEquivalence;
+    }
+
+    public ItemTime(short idIcon, bool isInfinity)
+    {
+        this.idIcon = idIcon;
+        this.isInfinity = isInfinity;
+    }
+
+    public ItemTime(short idIcon, int s)
 	{
 		this.idIcon = idIcon;
 		minute = s / 60;

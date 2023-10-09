@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Vietpad.InputMethod;
-using UnityEngine;
 
 namespace Library
 {
-    public class MyMain
+    public class MyMain : IActionListener
     {
+        public static bool isUseUnikey;
+
         public static bool chat(string text)
         {
             return Pk9rXmap.Chat(text);
@@ -19,11 +20,15 @@ namespace Library
             Time.timeScale = 2f;
             VietKeyHandler.InputMethod = InputMethods.Telex;
             VietKeyHandler.SmartMark = true;
+            VietKeyHandler.VietModeEnabled = false;
         }
 
         public static void paint(mGraphics g)
         {
             paintInfor(g);
+            LibraryChar.paint(g);
+            ListCharsInMap.paint(g);
+            Boss.Paint(g);
         }
 
         private static void paintInfor(mGraphics g)
@@ -54,7 +59,7 @@ namespace Library
                     return;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Until.writeLogError("paintInfor.txt", e.Message);
             }
@@ -76,10 +81,15 @@ namespace Library
             {
                 LoadMap.loadMap(1);
             }
-            if (keyCode == 'm')
+            if (keyCode == 'o')
             {
                 GameCanvas.panel.setTypeZone();
                 GameCanvas.panel.show();
+                return;
+            }
+            if (keyCode == 'm')
+            {
+                openMenu();
                 return;
             }
         }
@@ -95,19 +105,54 @@ namespace Library
                 Until.writeLogError("hintChat.txt", ex.Message);
             }
             LoadMap.update();
+            LibraryChar.update();
+            ListCharsInMap.update();
+            Boss.Update();
+        }
+
+        public static void onUpdateTouchGameScr()
+        {
+            ListCharsInMap.updateTouch();
+            Boss.UpdateTouch();
+        }
+
+        private static void openMenu()
+        {
+            MyVector myVector = new MyVector();
+            //myVector.addElement(new Command("Menu\n Training\nMob", FunctionTrainMob.gI(), 10000, null));
+            //myVector.addElement(new Command("Menu\n Săn boss", FunctionBoss.gI(), 10001, null));
+            //myVector.addElement(new Command("Menu\n Yardart", FunctionBoss.gI(), 10002, null));
+            //myVector.addElement(new Command("Menu\n Đệ tử", FunctionPet.gI(), 10003, null));
+            //myVector.addElement(new Command("Menu\n Auto\nSkills", FunctionSkill.gI(), 10004, null));
+            myVector.addElement(new Command("Chức năng\nHiển thị", LibraryChar.gI(), 10005, null));
+            myVector.addElement(new Command("Chức năng\nkhác", gI(), 10006, null));
+            GameCanvas.menu.startAt(myVector, 0);
         }
 
         public void perform(int idAction, object p)
         {
+            switch (idAction)
+            {
+                case 10006:
+                    MyVector myVector = new MyVector();
+                    myVector.addElement(new Command("Unikey\n" + (isUseUnikey ? "Bật" : "Tắt"), gI(), 10201, null));
+                    GameCanvas.menu.startAt(myVector, 0);
+                    break;
+                case 10201:
+                    isUseUnikey = !isUseUnikey;
+                    VietKeyHandler.VietModeEnabled = isUseUnikey;
+                    GameScr.info1.addInfo((isUseUnikey ? "Bật" : "Tắt") + " Unikey", 0);
+                    break;
+            }
         }
 
         public static MyMain gI()
         {
-            if (MyMain._Instance == null)
+            if (_Instance == null)
             {
-                MyMain._Instance = new MyMain();
+                _Instance = new MyMain();
             }
-            return MyMain._Instance;
+            return _Instance;
         }
 
         public void onChatFromMe(string text, string to)

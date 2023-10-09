@@ -4279,6 +4279,7 @@ public class GameScr : mScreen, IChatable
         {
             return;
         }
+        MyMain.onUpdateTouchGameScr();
         mScreen.keyTouch = -1;
         if (GameCanvas.isTouchControl)
         {
@@ -4564,7 +4565,6 @@ public class GameScr : mScreen, IChatable
         {
             autoPlay();
         }
-        Char.myCharz().cspeed = 6;
         updateXoSo();
         mSystem.checkAdComlete();
         SmallImage.update();
@@ -7057,6 +7057,7 @@ public class GameScr : mScreen, IChatable
 
     public void chatVip(string chatVip)
     {
+        Boss.AddBoss(chatVip);
         if (!startChat)
         {
             currChatWidth = mFont.tahoma_7b_yellowSmall.getWidth(chatVip);

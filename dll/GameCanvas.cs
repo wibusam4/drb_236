@@ -283,7 +283,7 @@ public class GameCanvas : IActionListener
 
 	public static bool isLoadBGok;
 
-	private static long lastTimePress = 0L;
+	public static long lastTimePress = 0L;
 
 	public static int keyAsciiPress;
 

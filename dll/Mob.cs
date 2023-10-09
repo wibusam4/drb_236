@@ -249,6 +249,8 @@ public class Mob : IMapObject
 
     private static GUIStyle gUIStyleBorder = StringHandle.guiStyle(0, 7f, FontStyle.Bold, Color.black);
 
+    public CharEffectTime mobEffectTime = new CharEffectTime();
+
     public Mob()
 	{
 	}
@@ -537,20 +539,55 @@ public class Mob : IMapObject
 
 	public virtual void update()
 	{
-		if (isMafuba)
+		mobEffectTime.update();
+        if (isMafuba)
 		{
 			return;
 		}
 		GetFrame();
-		if (blindEff && GameCanvas.gameTick % 5 == 0)
-		{
-			ServerEffect.addServerEffect(113, x, y, 1);
-		}
-		if (sleepEff && GameCanvas.gameTick % 10 == 0)
-		{
-			EffecMn.addEff(new Effect(41, x, y, 3, 1, 1));
-		}
-		if (!GameCanvas.lowGraphic && status != 1 && status != 0 && !GameCanvas.lowGraphic && GameCanvas.gameTick % (15 + mobId * 2) == 0)
+        if (blindEff)
+        {
+            if (!mobEffectTime.isTeleported)
+            {
+                mobEffectTime.isTeleported = true;
+                mobEffectTime.lastTimeTeleported = mSystem.currentTimeMillis();
+                if (mobEffectTime.timeTeleported <= 0)
+                {
+                    mobEffectTime.timeTeleported = 7;
+                }
+            }
+            if (GameCanvas.gameTick % 5 == 0)
+            {
+                ServerEffect.addServerEffect(113, x, y, 1);
+            }
+        }
+        else
+        {
+            mobEffectTime.isTeleported = false;
+            mobEffectTime.timeTeleported = 0;
+        }
+        if (sleepEff)
+        {
+            if (!mobEffectTime.isHypnotized)
+            {
+                mobEffectTime.isHypnotized = true;
+                mobEffectTime.lastTimeHypnotized = mSystem.currentTimeMillis();
+                if (mobEffectTime.timeHypnotized <= 0)
+                {
+                    mobEffectTime.timeHypnotized = 13;
+                }
+            }
+            if (GameCanvas.gameTick % 10 == 0)
+            {
+                EffecMn.addEff(new Effect(41, x, y, 3, 1, 1));
+            }
+        }
+        else
+        {
+            mobEffectTime.isHypnotized = false;
+            mobEffectTime.timeHypnotized = 0;
+        }
+        if (!GameCanvas.lowGraphic && status != 1 && status != 0 && !GameCanvas.lowGraphic && GameCanvas.gameTick % (15 + mobId * 2) == 0)
 		{
 			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
@@ -583,7 +620,20 @@ public class Mob : IMapObject
 		}
 		if (isFreez)
 		{
-			if (GameCanvas.gameTick % 5 == 0)
+
+            this.mobEffectTime.isTDHS = true;
+            if (this.isDie)
+            {
+                this.seconds = 0;
+                this.mobEffectTime.isTDHS = false;
+                this.mobEffectTime.timeTDHS = 0;
+            }
+            else
+            {
+                this.mobEffectTime.lastTimeTDHS = mSystem.currentTimeMillis();
+                this.mobEffectTime.timeTDHS = this.seconds + 1;
+            }
+            if (GameCanvas.gameTick % 5 == 0)
 			{
 				ServerEffect.addServerEffect(113, x, y, 1);
 			}
@@ -637,6 +687,11 @@ public class Mob : IMapObject
 				frame = 10;
 			}
 		}
+		else
+		{
+            this.mobEffectTime.isTDHS = false;
+            this.mobEffectTime.timeTDHS = 0;
+        }
 		if (!isUpdate())
 		{
 			return;
@@ -1436,8 +1491,16 @@ public class Mob : IMapObject
 		{
 			return;
 		}
-        string text = string.Format("{0}. {1}", this.getTemplate().mobTemplateId, this.getTemplate().name);
-        StringHandle.drawStringBd(gUIStyleNormal, g, text, (float)(this.x - StringHandle.getWidth(gUIStyleNormal, text) / 2), (float)(this.y - this.h - 15), gUIStyleBorder);
+		if (LibraryChar.enableShowNameMob)
+		{
+            string text = string.Format("{0}. {1}", getTemplate().mobTemplateId, getTemplate().name);
+            StringHandle.drawStringBd(gUIStyleNormal, g, text, x - StringHandle.getWidth(gUIStyleNormal, text) / 2, y - h - 15, gUIStyleBorder);
+        }
+		if (LibraryChar.enableShowPositionMob)
+		{
+            string text = string.Format("[{0}]", mobId);
+            StringHandle.drawStringBd(mFont.tahoma_7_yellow, g, text, x, y, mFont.CENTER, mFont.tahoma_7);
+        }
         if (isMafuba)
 		{
 			if (!changBody)
@@ -1586,7 +1649,9 @@ public class Mob : IMapObject
 		{
 			holdEffID = 0;
 		}
-	}
+        mobEffectTime.isTied = false;
+        mobEffectTime.isTiedByMe = false;
+    }
 
 	public void removeBlindEff()
 	{
